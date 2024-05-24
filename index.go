@@ -49,7 +49,7 @@ func main() {
 
 	go checkSitesPeriodically()
 
-	r.Run(":8080")
+	r.Run(":8000")
 }
 
 func addSite(c *gin.Context) {

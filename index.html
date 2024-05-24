@@ -11,10 +11,11 @@
     </form>
     <ul id="siteList"></ul>
     <script>
+        var url = "https://goback-six.vercel.app"
         document.getElementById('addSiteForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const url = document.getElementById('siteUrl').value;
-            await fetch('http://localhost:8080/add_site', {
+            await fetch(`${url}/add_site`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -25,7 +26,7 @@
         });
 
         async function loadSites() {
-            const response = await fetch('http://localhost:8080/get_sites');
+            const response = await fetch(`${url}/get_sites`);
             const sites = await response.json();
             const siteList = document.getElementById('siteList');
             siteList.innerHTML = '';
@@ -35,7 +36,7 @@
                 const button = document.createElement('button');
                 button.textContent = 'Check Status';
                 button.addEventListener('click', async () => {
-                    await fetch(`http://localhost:8080/check_site/${site.id}`, {
+                    await fetch(`${url}/${site.id}`, {
                         method: 'POST'
                     });
                     loadSites();
