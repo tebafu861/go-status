@@ -49,6 +49,9 @@ func main() {
 
 	go checkSitesPeriodically()
 
+	// Serve index.html for the root route
+	r.StaticFile("/", "index.html")
+
 	r.Run(":8000")
 }
 
