@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WordPress Status Checker</title>
+</head>
+<body>
+    <h1>WordPress Site Status Checker</h1>
+    <form id="addSiteForm">
+        <input type="text" id="siteUrl" placeholder="Enter WordPress site URL">
+        <button type="submit">Add Site</button>
+    </form>
+    <ul id="siteList"></ul>
+    <script>
+        document.getElementById('addSiteForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const url = document.getElementById('siteUrl').value;
+            await fetch('http://localhost:8080/add_site', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            });
+            loadSites();
+        });
+
+        async function loadSites() {
+            const response = await fetch('http://localhost:8080/get_sites');
+            const sites = await response.json();
+            const siteList = document.getElementById('siteList');
+            siteList.innerHTML = '';
+            sites.forEach(site => {
+                const li = document.createElement('li');
+                li.textContent = `${site.url} - ${site.status} - Last Checked: ${new Date(site.last_checked).toLocaleString()}`;
+                const button = document.createElement('button');
+                button.textContent = 'Check Status';
+                button.addEventListener('click', async () => {
+                    await fetch(`http://localhost:8080/check_site/${site.id}`, {
+                        method: 'POST'
+                    });
+                    loadSites();
+                });
+                li.appendChild(button);
+                siteList.appendChild(li);
+            });
+        }
+
+        loadSites();
+        setInterval(loadSites, 60000);
+    </script>
+</body>
+</html>
